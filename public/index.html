@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>InkSync — Draw something, send it</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">IS</span> INKSYNC</div>
+      <span class="pill">DRAW FOR E-INK</span>
+    </header>
+    <section class="intro">
+      <p class="eyebrow">ONE SCREEN · INFINITE DOODLES</p>
+      <h1>Leave a sketch<br>on the screen.</h1>
+      <p>Draw on your phone or laptop, add your name and send it. Your sketch appears when the TRMNL display refreshes.</p>
+    </section>
+    <section class="workspace" aria-labelledby="pad-title">
+      <div class="workspace-head">
+        <div><h2 id="pad-title">Your sketch</h2><p>Black ink, one canvas, no account.</p></div>
+        <span class="pill small">720 × 320</span>
+      </div>
+      <label for="author" class="eyebrow">YOUR NAME</label>
+      <input id="author" name="author" type="text" maxlength="32" placeholder="Who drew this?" autocomplete="nickname" required>
+      <canvas id="pad" width="720" height="320" aria-label="Drawing canvas"></canvas>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button id="undo" type="button" class="button secondary">Undo</button>
+          <button id="clear" type="button" class="button secondary">Clear</button>
+        </div>
+        <button id="send" type="button" class="button primary">Send to display →</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite">Ready when you are.</p>
+    </section>
+    <section class="details">
+      <div>
+        <p class="eyebrow">ONE SHARED DISPLAY</p>
+        <h2>The last sketch stays up.</h2>
+        <p>Sending a new drawing replaces the previous one. Anyone with this page can send, so please keep it friendly.</p>
+        <button id="copy" type="button" class="button secondary">Copy drawing link</button>
+        <p id="latest-meta" class="latest-meta">Nothing has been sent yet.</p>
+      </div>
+      <div class="preview-card">
+        <span class="eyebrow">LATEST SENT</span>
+        <img id="preview" width="360" height="160" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Latest drawing, or a blank canvas">
+      </div>
+    </section>
+    <footer>InkSync · Draw something · Send it · Built for TRMNL</footer>
+  </main>
+</body>
+</html>
