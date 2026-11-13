@@ -6,6 +6,7 @@
   <div class="ink-main">
     <div class="ink-paper">
       <div class="ink-label">LATEST DRAWING</div>
+      {% if has_sketch %}
       <div class="ink-canvas"> 
         <svg viewBox="0 0 720 320" role="img" aria-label="Sample InkSync doodle">
           <path d="M100 228 Q170 105 240 228 Q310 105 380 228" fill="none"
@@ -16,6 +17,9 @@
           <path d="M258 68 L287 42 M228 60 L210 36" stroke="#111" stroke-width="6"/>
         </svg>
       </div>
+      {% else %}
+        <div class="ink-canvas ink-empty">The next drawing will go here.</div>
+      {% endif %}
     </div>
     <div class="ink-join">
       <div class="ink-qr-placeholder">QR<br>COMING<br>SOON</div>
@@ -23,5 +27,8 @@
       <div class="ink-join-note">A new sketch appears at the next refresh.</div>
     </div>
   </div>
-  <div class="ink-footer">DRAW FROM YOUR PHONE OR LAPTOP</div>
+  <div class="ink-footer">
+    <span>ROOM: {{ room | default: 'DEMO' | upcase | escape }}</span>
+    <span>{% if has_sketch %}SAMPLE SKETCH · DESIGN PREVIEW{% else %}WAITING FOR THE FIRST DRAWING{% endif %}</span>
+  </div>
 </div>
