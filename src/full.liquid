@@ -1,34 +1,29 @@
-<div class="layout ink-shell">
-  <div class="ink-header">
-    <span class="ink-brand">INKSYNC</span>
-    <span class="ink-tag">DRAW SOMETHING · SEND IT</span>
-  </div>
-  <div class="ink-main">
-    <div class="ink-paper">
-      <div class="ink-label">LATEST DRAWING</div>
-      {% if has_sketch %}
-      <div class="ink-canvas"> 
-        <svg viewBox="0 0 720 320" role="img" aria-label="Sample InkSync doodle">
-          <path d="M100 228 Q170 105 240 228 Q310 105 380 228" fill="none"
-          stroke="#111" stroke-width="9" stroke-linecap="round"/>
-          <path d="M410 220 Q485 110 555 180 Q595 235 630 170" fill="none"
-          stroke="#111" stroke-width="9" stroke-linecap="round"/>
-          <circle cx="244" cy="80" r="19" fill="none" stroke="#111" stroke-width="7"/>
-          <path d="M258 68 L287 42 M228 60 L210 36" stroke="#111" stroke-width="6"/>
-        </svg>
+<div class="layout">
+  <div class="ink-shell ink-full">
+    <div class="ink-main">
+      <div class="ink-paper">
+        <div class="ink-canvas"></div>
       </div>
-      {% else %}
-        <div class="ink-canvas ink-empty">The next drawing will go here.</div>
-      {% endif %}
-    </div>
-    <div class="ink-join">
-      <div class="ink-qr-placeholder">QR<br>COMING<br>SOON</div>
-      <div class="ink-join-title">SCAN TO DRAW</div>
-      <div class="ink-join-note">A new sketch appears at the next refresh.</div>
+      <div class="ink-join">
+        <div class="ink-details">
+          <div class="ink-detail">
+            <div class="ink-details-label">DRAWN BY</div>
+            <div class="ink-details-value">{{ sketch_author | default: 'Waiting for sketch' | truncate: 24 | escape }}</div>
+          </div>
+          <div class="ink-detail">
+            <div class="ink-details-label">LAST SENT</div>
+            <div class="ink-details-time">{{ sketch_sent_at | default: 'Not sent yet' | escape }}</div>
+          </div>
+        </div>
+        <div class="ink-join-bottom">
+          <div class="ink-qr-placeholder">QR LINK<br>AFTER<br>DEPLOY</div>
+          <div class="ink-join-title">SCAN TO DRAW</div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="ink-footer">
-    <span>ROOM: {{ room | default: 'DEMO' | upcase | escape }}</span>
-    <span>{% if has_sketch %}SAMPLE SKETCH · DESIGN PREVIEW{% else %}WAITING FOR THE FIRST DRAWING{% endif %}</span>
-  </div>
+</div>
+<div class="title_bar">
+  <span class="title">InkSync</span>
+  <span class="instance">itscryptune</span>
 </div>

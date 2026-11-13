@@ -10,5 +10,5 @@ strategy: static
 static_data: '{"message":"A drawing will appear here"}'
 refresh_interval: 60
 framework_version: latest
-no_screen_padding: 'yes'
+no_screen_padding: 'no'
 dark_mode: 'no'
