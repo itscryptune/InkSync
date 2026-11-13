@@ -4,14 +4,11 @@
 # Docs: https://help.trmnl.com/en/articles/10542599-importing-and-exporting-private-plugins#h_581fb988f0
 #
 ---
-strategy: polling
-no_screen_padding: 'no'
-dark_mode: 'no'
-static_data: ''
-polling_verb: get
+name: InkSync
+description: Draw for e-ink
+strategy: static
+static_data: '{"message":"A drawing will appear here"}'
+refresh_interval: 60
 framework_version: latest
-polling_url: ''
-polling_headers: ''
-name: My Plugin
-description: ''
-refresh_interval: 1440
+no_screen_padding: 'yes'
+dark_mode: 'no'

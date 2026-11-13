@@ -3,3 +3,8 @@ _build/
 
 # trmnlp test --report output
 report/
+node_modules/
+.vercel/
+.env
+.env.*
+!.env.example
