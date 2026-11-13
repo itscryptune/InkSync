@@ -1,0 +1,8 @@
+{
+  "name": "inksync",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Send a sketch to TRMNL display",
+  "dependencies": { "qrcode": "^1.5.4" }
+}
