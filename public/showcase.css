@@ -4,8 +4,8 @@ body { margin:0; border-top:3px solid #111; }
 .shell { max-width:1150px; margin:0 auto; padding:30px 22px 22px; }
 .topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
 .brand { display:flex; gap:12px; align-items:center; }
-.mark { width:53px; height:53px; display:grid; place-items:center; background:#111;
-  color:#fff; font-size:19px; font-weight:900; }
+.mark { width:53px; height:53px; display:block;
+  object-fit:contain; flex:none; }
 .brand strong { display:block; font-size:28px; letter-spacing:-.04em; }
 .brand small { display:block; margin-top:4px; color:#555; font-size:13px; }
 button { font:700 15px Arial,sans-serif; background:#fff; border:2px solid #111;
@@ -68,3 +68,5 @@ footer a { color:inherit; }
   .tabs { gap:6px; }
   footer { flex-direction:column; }
 }
+
+ 
