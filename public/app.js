@@ -1,5 +1,9 @@
 const pad = document.querySelector('#pad');
 const ctx = pad.getContext('2d');
+const authorInput = document.querySelector('#author');
+const status = document.querySelector('#status');
+const latestMeta = document.querySelector('#latest-meta');
+const latestPreview = document.querySelector('#preview');
 const strokes = [];
 let activePointer = null;
 let currentStroke = null;
@@ -72,7 +76,58 @@ document.querySelector('#clear').addEventListener('click', () => {
   strokes.length = 0;
   showDraft();
 });
-document.querySelector('#send').addEventListener('click', () => {
-  document.querySelector('#status').textContent = 'The Send API comes in a later step.';
+const sendButton = document.querySelector('#send');
+sendButton.addEventListener('click', async () => {
+  const author = authorInput.value.trim();
+  if (!author || author.length > 32) {
+    status.textContent = 'Enter a name (up to 32 characters).';
+    authorInput.focus();
+    return;
+  }
+  if (activePointer !== null) return;
+  if (!strokes.some(stroke => stroke.length)) {
+    status.textContent = 'Draw something before sending.';
+    return;
+  }
+  sendButton.disabled = true;
+  status.textContent = 'Sending your sketch…';
+  try {
+    const response = await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ author, strokes })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to send.');
+    status.textContent = 'Saved! The display updates at its next refresh.';
+    await loadLatest();
+  } catch (error) {
+    status.textContent = error.message;
+  } finally {
+    sendButton.disabled = false;
+  }
 });
+async function loadLatest() {
+  try {
+    const response = await fetch('/api/state', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Latest sketch is unavailable.');
+    const state = await response.json();
+    latestPreview.src = state.ink_url;
+    latestMeta.textContent = state.has_sketch
+      ? `Drawn by ${state.sketch_author} · Last sent ${state.sketch_sent_at}`
+      : 'Nothing has been sent yet.';
+  } catch (error) {
+    latestMeta.textContent = 'Latest drawing is unavailable right now.';
+  }
+}
+document.querySelector('#copy').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.origin + '/');
+    status.textContent = 'Drawing link copied.';
+  } catch (error) {
+    status.textContent = 'Could not copy the link; copy it from the address bar.';
+  }
+});
+if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
+  loadLatest();
 showDraft();
