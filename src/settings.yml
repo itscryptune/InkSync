@@ -6,9 +6,13 @@
 ---
 name: InkSync
 description: Draw for e-ink
-strategy: static
-static_data: '{"message":"A drawing will appear here"}'
-refresh_interval: 60
+name: InkSync
+description: Draw notes for one e-ink display
+strategy: polling
+polling_url: "https://inksync-black.vercel.app/api/state"
+polling_verb: GET
+polling_headers: ''
+refresh_interval: 15
 framework_version: latest
 no_screen_padding: 'no'
 dark_mode: 'no'

@@ -2,7 +2,11 @@
   <div class="ink-shell ink-full">
     <div class="ink-main">
       <div class="ink-paper">
-        <div class="ink-canvas"></div>
+        <div class="ink-canvas">
+          {% if has_sketch and ink_url %}
+            <img class="ink-image" src="{{ ink_url | escape }}" alt="Latest InkSync drawing">
+          {% endif %}
+        </div>
       </div>
       <div class="ink-join">
         <div class="ink-details">
@@ -16,7 +20,11 @@
           </div>
         </div>
         <div class="ink-join-bottom">
-          <div class="ink-qr-placeholder">QR LINK<br>AFTER<br>DEPLOY</div>
+          {% if qr_url %}
+            <img class="ink-qr-image" src="{{ qr_url | escape }}" alt="Scan to open InkSync">
+          {% else %}
+            <div class="ink-qr-placeholder">QR UNAVAILABLE</div>
+          {% endif %}
           <div class="ink-join-title">SCAN TO DRAW</div>
         </div>
       </div>
