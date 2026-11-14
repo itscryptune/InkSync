@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       version: sketch.version,
       ink_url: `${origin}/api/ink?v=${encodeURIComponent(sketch.version)}`,
       qr_url: `${origin}/api/qr`,
-      website_url: origin
+      website_url: `${origin}/draw`
     });
   } catch (error) {
     console.error('Sketch state failed:', error);

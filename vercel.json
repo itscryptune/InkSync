@@ -1,4 +1,21 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null
+  "framework": null,
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/showcase.html"
+    },
+    {
+      "src": "/draw",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/draw/",
+      "dest": "/index.html"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
 }

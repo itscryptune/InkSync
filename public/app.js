@@ -164,7 +164,7 @@ async function loadLatest() {
 }
 document.querySelector('#copy').addEventListener('click', async () => {
   try {
-    await navigator.clipboard.writeText(window.location.origin + '/');
+    await navigator.clipboard.writeText(window.location.origin + '/draw');
     statusEl.textContent = 'Drawing link copied.';
   } catch (error) {
     statusEl.textContent = 'Could not copy the link; copy it from the address bar.';

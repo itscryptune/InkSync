@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   try {
     const bitmap = makeBitmap(160, 160);
-    paintQr(bitmap, baseUrl(), 0, 0, 160);
+    paintQr(bitmap, `${baseUrl()}/draw`, 0, 0, 160);
     const image = toPng(bitmap);
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', String(image.length));
