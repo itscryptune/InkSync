@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f3f3">
+  <title>InkSync</title>
+  <link rel="stylesheet" href="showcase.css">
+  <script src="showcase.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="mark">IS</span>
+        <div><strong>InkSync</strong><small>Draw something. Send it to e-ink.</small></div>
+      </div>
+      <button id="refresh" type="button">Refresh display</button>
+    </header>
+    <nav class="tabs" aria-label="Display layout">
+      <button class="active" data-layout="full" aria-pressed="true">Full</button>
+      <button data-layout="half-horizontal" aria-pressed="false">Half horizontal</button>
+      <button data-layout="half-vertical" aria-pressed="false">Half vertical</button>
+      <button data-layout="quadrant" aria-pressed="false">Quadrant</button>
+    </nav>
+    <p id="message" class="message" role="status" aria-live="polite">Loading the latest sketch…</p>
+    <div id="display-wrap" class="display-wrap">
+      <div id="display-host" class="display-host">
+        <section id="display" class="display full" aria-label="InkSync display preview">
+          <div class="screen">
+            <div class="drawing"><img id="sketch" alt="Latest InkSync drawing"></div>
+            <aside class="sidebar">
+              <div class="info">
+                <div><span>DRAWN BY</span><strong id="author">Waiting for sketch</strong></div>
+                <div><span>LAST SENT</span><strong id="sent">Not sent yet</strong></div>
+              </div>
+              <div class="join"><img id="qr" alt="Scan to draw QR code"><b>SCAN TO DRAW</b></div>
+            </aside>
+          </div>
+          <div class="titlebar"><b>InkSync</b><span>itscryptune</span></div>
+        </section>
+      </div>
+    </div>
+    <footer>
+      <a href="/">Draw something →</a>
+      <span>Created by <a href="https://github.com/itscryptune">itscryptune</a></span>
+    </footer>
+  </main>
+</body>
+</html>
