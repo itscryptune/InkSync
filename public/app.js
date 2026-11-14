@@ -130,4 +130,5 @@ document.querySelector('#copy').addEventListener('click', async () => {
 });
 if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
   loadLatest();
+}
 showDraft();
