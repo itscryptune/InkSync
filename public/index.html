@@ -12,7 +12,7 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand"><span class="brand-mark">IS</span> INKSYNC</div>
-      <span class="pill">DRAW FOR E-INK</span>
+      <a class="button secondary" href="/showcase.html">Display showcase →</a>
     </header>
     <section class="intro">
       <p class="eyebrow">ONE SCREEN · INFINITE DOODLES</p>
@@ -27,9 +27,17 @@
       <label for="author" class="eyebrow">YOUR NAME</label>
       <input id="author" name="author" type="text" maxlength="32" placeholder="Who drew this?" autocomplete="nickname" required>
       <canvas id="pad" width="720" height="320" aria-label="Drawing canvas"></canvas>
+      <div class="tools" aria-label="Drawing tools">
+        <div class="tool-choice">
+          <button id="pen" type="button" class="button secondary selected" aria-pressed="true">Pen</button>
+          <button id="eraser" type="button" class="button secondary" aria-pressed="false">Eraser</button>
+        </div>
+        <label class="size-control" for="size">Size <input id="size" type="range" min="2" max="16" value="3" step="1"><output id="size-value" for="size">3 px</output></label>
+      </div>
       <div class="toolbar">
         <div class="toolbar-left">
           <button id="undo" type="button" class="button secondary">Undo</button>
+          <button id="redo" type="button" class="button secondary">Redo</button>
           <button id="clear" type="button" class="button secondary">Clear</button>
         </div>
         <button id="send" type="button" class="button primary">Send to display →</button>

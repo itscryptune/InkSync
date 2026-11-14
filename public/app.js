@@ -1,36 +1,47 @@
 const pad = document.querySelector('#pad');
 const ctx = pad.getContext('2d');
 const authorInput = document.querySelector('#author');
-const status = document.querySelector('#status');
+const statusEl = document.querySelector('#status');
 const latestMeta = document.querySelector('#latest-meta');
 const latestPreview = document.querySelector('#preview');
+const sizeInput = document.querySelector('#size');
+const sizeValue = document.querySelector('#size-value');
+const undoButton = document.querySelector('#undo');
+const redoButton = document.querySelector('#redo');
+const penButton = document.querySelector('#pen');
+const eraserButton = document.querySelector('#eraser');
+const sendButton = document.querySelector('#send');
 const strokes = [];
+const undoStack = [];
+const redoStack = [];
 let activePointer = null;
 let currentStroke = null;
+let tool = 'pen';
 
 function showDraft() {
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, pad.width, pad.height);
-  ctx.strokeStyle = '#111';
-  ctx.fillStyle = '#111';
-  ctx.lineWidth = 3;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   for (const stroke of strokes) {
-    if (!stroke.length) continue;
-    if (stroke.length === 1) {
+    if (!stroke.points.length) continue;
+    ctx.strokeStyle = stroke.tool === 'eraser' ? '#fff' : '#111';
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.lineWidth = stroke.size;
+    if (stroke.points.length === 1) {
       ctx.beginPath();
-      ctx.arc(...stroke[0], 1.6, 0, Math.PI * 2);
+      ctx.arc(...stroke.points[0], stroke.size / 2, 0, Math.PI * 2);
       ctx.fill();
       continue;
     }
     ctx.beginPath();
-    ctx.moveTo(...stroke[0]);
-    for (const point of stroke.slice(1)) ctx.lineTo(...point);
+    ctx.moveTo(...stroke.points[0]);
+    for (const point of stroke.points.slice(1)) ctx.lineTo(...point);
     ctx.stroke();
   }
+  undoButton.disabled = activePointer !== null || undoStack.length === 0;
+  redoButton.disabled = activePointer !== null || redoStack.length === 0;
 }
-
 
 function getPoint(event) {
   const bounds = pad.getBoundingClientRect();
@@ -39,58 +50,89 @@ function getPoint(event) {
     Math.round(Math.max(0, Math.min(319, (event.clientY - bounds.top) * 320 / bounds.height)))
   ];
 }
+function totalPoints() {
+  return strokes.reduce((total, stroke) => total + stroke.points.length, 0);
+}
+function setTool(next) {
+  if (activePointer !== null) return;
+  tool = next;
+  penButton.classList.toggle('selected', tool === 'pen');
+  eraserButton.classList.toggle('selected', tool === 'eraser');
+  penButton.setAttribute('aria-pressed', String(tool === 'pen'));
+  eraserButton.setAttribute('aria-pressed', String(tool === 'eraser'));
+}
+penButton.addEventListener('click', () => setTool('pen'));
+eraserButton.addEventListener('click', () => setTool('eraser'));
+sizeInput.addEventListener('input', () => { sizeValue.textContent = `${sizeInput.value} px`; });
 
 pad.addEventListener('pointerdown', event => {
-  if (activePointer !== null || strokes.length >= 120) return;
+  if (activePointer !== null || strokes.length >= 120 || totalPoints() >= 4000) {
+    statusEl.textContent = 'Drawing limit reached. Undo or clear to make room.';
+    return;
+  }
+  if (event.button !== 0 && event.pointerType === 'mouse') return;
   activePointer = event.pointerId;
-  currentStroke = [getPoint(event)];
+  currentStroke = { tool, size: Number(sizeInput.value), points: [getPoint(event)] };
+  redoStack.length = 0;
+  undoStack.push({ kind: 'stroke', stroke: currentStroke });
   strokes.push(currentStroke);
   pad.setPointerCapture(event.pointerId);
   showDraft();
 });
 pad.addEventListener('pointermove', event => {
   if (event.pointerId !== activePointer || !currentStroke) return;
-  if (strokes.reduce((count, stroke) => count + stroke.length, 0) >= 4000) return;
+  if (totalPoints() >= 4000) return;
   const next = getPoint(event);
-  const previous = currentStroke[currentStroke.length - 1];
+  const previous = currentStroke.points[currentStroke.points.length - 1];
   if (previous[0] !== next[0] || previous[1] !== next[1]) {
-    currentStroke.push(next);
+    currentStroke.points.push(next);
     showDraft();
   }
 });
 function finishStroke(event) {
-  if (event.pointerId === activePointer) {
-    activePointer = null;
-    currentStroke = null;
-  }
+  if (event.pointerId !== activePointer) return;
+  activePointer = null;
+  currentStroke = null;
+  showDraft();
 }
 pad.addEventListener('pointerup', finishStroke);
 pad.addEventListener('pointercancel', finishStroke);
-document.querySelector('#undo').addEventListener('click', () => {
-  if (activePointer !== null) return; 
-  strokes.pop();
+undoButton.addEventListener('click', () => {
+  if (activePointer !== null || !undoStack.length) return;
+  const action = undoStack.pop();
+  if (action.kind === 'clear') strokes.push(...action.strokes);
+  else strokes.pop();
+  redoStack.push(action);
+  showDraft();
+});
+redoButton.addEventListener('click', () => {
+  if (activePointer !== null || !redoStack.length) return;
+  const action = redoStack.pop();
+  if (action.kind === 'clear') strokes.length = 0;
+  else strokes.push(action.stroke);
+  undoStack.push(action);
   showDraft();
 });
 document.querySelector('#clear').addEventListener('click', () => {
-  if (activePointer !== null) return;
-  strokes.length = 0;
+  if (activePointer !== null || !strokes.length) return;
+  undoStack.push({ kind: 'clear', strokes: strokes.splice(0) });
+  redoStack.length = 0;
   showDraft();
 });
-const sendButton = document.querySelector('#send');
 sendButton.addEventListener('click', async () => {
   const author = authorInput.value.trim();
   if (!author || author.length > 32) {
-    status.textContent = 'Enter a name (up to 32 characters).';
+    statusEl.textContent = 'Enter a name (up to 32 characters).';
     authorInput.focus();
     return;
   }
   if (activePointer !== null) return;
-  if (!strokes.some(stroke => stroke.length)) {
-    status.textContent = 'Draw something before sending.';
+  if (!strokes.some(stroke => stroke.tool === 'pen')) {
+    statusEl.textContent = 'Draw something before sending.';
     return;
   }
   sendButton.disabled = true;
-  status.textContent = 'Sending your sketch…';
+  statusEl.textContent = 'Sending your sketch…';
   try {
     const response = await fetch('/api/send', {
       method: 'POST',
@@ -99,10 +141,10 @@ sendButton.addEventListener('click', async () => {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Unable to send.');
-    status.textContent = 'Saved! The display updates at its next refresh.';
+    statusEl.textContent = 'Saved! The display updates at its next refresh.';
     await loadLatest();
   } catch (error) {
-    status.textContent = error.message;
+    statusEl.textContent = error.message;
   } finally {
     sendButton.disabled = false;
   }
@@ -123,12 +165,11 @@ async function loadLatest() {
 document.querySelector('#copy').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(window.location.origin + '/');
-    status.textContent = 'Drawing link copied.';
+    statusEl.textContent = 'Drawing link copied.';
   } catch (error) {
-    status.textContent = 'Could not copy the link; copy it from the address bar.';
+    statusEl.textContent = 'Could not copy the link; copy it from the address bar.';
   }
 });
-if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') {
-  loadLatest();
-}
+setTool('pen');
 showDraft();
+if (window.location.protocol === 'https:' || window.location.hostname === 'localhost') loadLatest();

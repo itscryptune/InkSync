@@ -17,13 +17,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid sketch.' });
   }
   let count = 0;
-  for (const stroke of body.strokes) {
-    if (!Array.isArray(stroke) || stroke.length > 4000) {
+  for (const item of body.strokes) {
+    const legacy = Array.isArray(item);
+    const points = legacy ? item : item?.points;
+    if (!Array.isArray(points) || points.length > 4000) {
       return res.status(400).json({ error: 'Invalid stroke.' });
     }
-    count += stroke.length;
+    if (!legacy && (Object.keys(item).some(key => !['points', 'size', 'tool'].includes(key)) ||
+        !Number.isInteger(item.size) || item.size < 2 || item.size > 16 ||
+        !['pen', 'eraser'].includes(item.tool))) {
+      return res.status(400).json({ error: 'Invalid drawing tool.' });
+    }
+    count += points.length;
     if (count > 4000) return res.status(413).json({ error: 'Too many points.' });
-    for (const point of stroke) {
+    for (const point of points) {
       if (!Array.isArray(point) || point.length !== 2 ||
           !Number.isInteger(point[0]) || !Number.isInteger(point[1]) ||
           point[0] < 0 || point[0] > 719 || point[1] < 0 || point[1] > 319) {
