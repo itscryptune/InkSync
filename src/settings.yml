@@ -6,8 +6,6 @@
 ---
 name: InkSync
 description: Draw for e-ink
-name: InkSync
-description: Draw notes for one e-ink display
 strategy: polling
 polling_url: "https://inksync.itscryptune.hackclub.app/api/state"
 polling_verb: GET
